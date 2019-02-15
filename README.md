@@ -1,5 +1,13 @@
 # Baseimage Introduction
 
+## (ARM64 Build Notes)
+
+I was able to build hyperledger/fabric-baseimage as arm64 (arm64v8) with a slight modification change the base Dockerfile:
+
+1. Setup Dockerfiles with `GOARCH=arm64 make docker` (Which may fail when trying to build a Java container, but that's okay)
+1. Build with: `docker build -t hyperledger/fabric-baseimage:arm64-0.4.14 -f build/docker/baseimage/Dockerfile .` 
+1. Build other docker images using this as a base, see [my fork of Hyperledger](https://github.com/four43/fabric)
+
 This directory contains the infrastructure for creating a new baseimage used as the basis for various docker images consumed within the Hyperledger Fabric workflow such as chaincode compilation/execution, unit-testing, and even cluster simulation. It is based on ubuntu-16.04 with various opensource projects added such as golang, grpc, and node.js. The actual Hyperledger code is injected just-in-time before deployment. The resulting images are published to image registries such as [hub.docker.com][fabric-baseimage].
 
 The purpose of this baseimage is to act as a bridge between a raw ubuntu/xenial configuration and the customizations required for supporting a Hyperledger Fabric environment. Some of the FOSS components that need to be added to Ubuntu do not have convenient native packages. Therefore, they are built from source. However, the build process is generally expensive (often taking in excess of 30 minutes) so it is fairly inefficient to JIT assemble these components on demand.
